@@ -1,48 +1,104 @@
-# Campaign Codex
+# Noctyra DM Campaign Manager
 
-`Campaign Codex` is an Owlbear Rodeo extension starter for DMs who want a modular combat dashboard made of movable mini-windows.
+`Noctyra DM Campaign Manager` is an Owlbear Rodeo extension project for Dungeon Masters who want a modular campaign and combat dashboard built from movable, adaptive islands.
 
-The current build focuses on:
+The current prototype is focused on fast encounter management:
 
-- Tracking a creature's stats directly on its Owlbear token metadata so HP, AC, initiative, conditions, actions, spells, and notes stay synced in real time.
-- Opening panel "islands" like `Overview`, `Stats`, `Combat`, `Spellbook`, `Conditions`, `Relations`, `Initiative`, and `Roll Log`.
-- Uploading custom portraits, showing class sigils, and keeping inline HP bars visible even when a full overview panel is closed.
-- Rolling attack checks, spell attacks, and saving throws with automatic hit checks against the current target's AC.
-- Applying basic immunity, resistance, and vulnerability adjustments when attack or spell damage lands.
-- Scaling attacks and spells by level thresholds, tracking spell slots, and supporting spell upcasts.
-- Pasting a 5e statblock into the overview parser to autofill core combat data and action entries.
+- Track creature and player data directly from Owlbear token metadata.
+- Open modular islands like `Overview`, `Stats`, `Combat`, `Spellbook`, `Conditions`, `Relations`, `Turn Order`, and `Roll Log`.
+- Keep portraits, class marks, HP, AC, initiative, and conditions visible in compact layouts.
+- Roll attacks, spell attacks, and saves with target-aware hit logic.
+- Apply basic immunity, resistance, and vulnerability adjustments when damage lands.
+- Scale attacks and spells by level thresholds, support upcasting, and track spell slots.
+- Parse a 5e statblock into creature data to accelerate setup.
+- Preview the UI locally in demo mode without needing Owlbear active.
 
-## Files
+## Project Status
 
-- `manifest.json`: Owlbear Rodeo extension manifest.
-- `background.js`: registers a token context-menu shortcut so selected tokens can be tracked quickly.
-- `index.html` + `styles.css`: dashboard shell and styling.
-- `src/`: no-build JavaScript modules for state, UI, Owlbear loading, statblock parsing, and sample preview mode.
+This is an active prototype.
+
+What already works:
+
+- Static local preview
+- Adaptive bento-island dashboard layout
+- Token-backed creature tracking structure
+- Portrait upload and class icon support
+- Combat, conditions, spell slot, and roll-log foundations
+- Statblock parsing for fast data entry
+
+What still needs improvement:
+
+- Deeper Owlbear Rodeo runtime validation
+- Better drag/snap/group behaviors between islands
+- More robust parser coverage for varied statblock formats
+- Cleaner compact layouts and responsive polish
+- Broader rules automation and richer combat flows
 
 ## Run Locally
 
-This workspace could not execute a normal Node/npm toolchain, so the extension is intentionally set up as a static no-build site.
+This project is intentionally set up as a static no-build site.
 
-From this folder:
+From the project folder:
 
 ```powershell
 python -m http.server 5173
 ```
 
-Then in Owlbear Rodeo:
+Then open:
 
-1. Open your profile.
+- Preview mode: `http://127.0.0.1:4173/index.html`
+- Owlbear manifest: `http://127.0.0.1:5173/manifest.json`
+
+To install in Owlbear Rodeo:
+
+1. Open your Owlbear Rodeo profile.
 2. Add a custom extension using `http://localhost:5173/manifest.json`.
 3. Enable the extension in your room.
-4. Select one or more tokens and either:
-   - click `Import Selected` inside the extension, or
-   - right-click a token and choose `Track in Campaign Codex`.
+4. Select tokens and import them through the extension UI or context menu.
 
-## Important Note
+## Project Structure
 
-The Owlbear Rodeo docs show the SDK being consumed from npm in a bundled project. Because npm was not usable in this environment, this starter tries to load the SDK through a CDN first and falls back to a local preview roster if Owlbear is unavailable.
+- `manifest.json`: Owlbear Rodeo extension manifest
+- `background.js`: token context-menu hook
+- `index.html`: app shell entry
+- `styles.css`: shared visual system and responsive layout
+- `src/constants.js`: reference data and UI constants
+- `src/island-registry.js`: island registry definitions
+- `src/island-system.js`: adaptive layout and rendering rules
+- `src/store.js`: app state and actions
+- `src/ui.js`: island rendering and interaction wiring
+- `src/sheet.js`: statblock parsing and creature sheet helpers
+- `assets/class-icons/`: class PNG marks used in the UI
 
-If Owlbear's iframe CSP blocks CDN module loading in your room, the next step is to bundle `@owlbear-rodeo/sdk` locally with Vite and keep the same app structure.
+## Contributing
+
+Contributions are welcome.
+
+If you want to help:
+
+1. Open an issue for bugs, UX problems, or feature ideas.
+2. Fork the repo and create a focused branch.
+3. Keep changes small and explain the why, not just the what.
+4. Include screenshots or short recordings for UI changes when possible.
+5. Open a pull request with clear notes about behavior changes and known gaps.
+
+Start with [CONTRIBUTING.md](./CONTRIBUTING.md) for practical guidelines.
+
+## Good Contribution Areas
+
+- Owlbear Rodeo integration fixes
+- Layout and card-behavior polish
+- Better statblock parsing
+- Rules automation improvements
+- Accessibility and mobile responsiveness
+- Better DM workflow design
+- Data validation and state syncing
+
+## Known Constraints
+
+- This repo currently avoids a full Node/Vite toolchain and runs as a static project.
+- Some Owlbear SDK loading paths may eventually need to be bundled locally.
+- Demo mode is useful for UI work, but it is not a substitute for live Owlbear testing.
 
 ## Sources
 
