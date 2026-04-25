@@ -34,32 +34,53 @@ What still needs improvement:
 - Cleaner compact layouts and responsive polish
 - Broader rules automation and richer combat flows
 
-## Run Locally
+## Local Development Install
 
-This project is intentionally set up as a static no-build site.
+This project now uses a Vite dev server for local Owlbear extension work.
 
 From the project folder:
 
 ```powershell
-python -m http.server 5173
+npm install
+npm run dev
 ```
 
-Then open:
+Then check the Vite terminal output for the active local URL and port. The default is usually:
 
-- Preview mode: `http://127.0.0.1:4173/index.html`
-- Owlbear manifest: `http://127.0.0.1:5173/manifest.json`
+- Preview app: `http://localhost:5173/`
+- Owlbear manifest: `http://localhost:5173/manifest.json`
 
-To install in Owlbear Rodeo:
+Before adding the extension in Owlbear, open the manifest URL directly in your browser and confirm it shows raw JSON. If Vite picks a different port like `5174`, use that port everywhere instead of `5173`.
 
-1. Open your Owlbear Rodeo profile.
-2. Add a custom extension using `http://localhost:5173/manifest.json`.
-3. Enable the extension in your room.
-4. Select tokens and import them through the extension UI or context menu.
+To install locally in Owlbear Rodeo:
+
+1. Run `npm install`.
+2. Run `npm run dev`.
+3. Open `http://localhost:5173/manifest.json` and confirm it returns raw JSON.
+4. In Owlbear Rodeo, open your profile and add a custom extension using that manifest URL.
+5. Enable the extension inside your room.
+6. Select tokens and import them through the extension UI or context menu.
+
+Note: this local install flow only works on the same computer running the dev server.
+
+## Public Testing / Deployment
+
+Do not share a `localhost` manifest URL with normal users or remote testers.
+
+For anyone outside your own machine, deploy the site somewhere public and use a real manifest URL such as:
+
+```txt
+https://your-extension-site.com/manifest.json
+```
+
+After deployment, that public manifest URL is what Owlbear users should install.
 
 ## Project Structure
 
-- `manifest.json`: Owlbear Rodeo extension manifest
+- `public/manifest.json`: Owlbear Rodeo extension manifest served to Owlbear
+- `public/icon.svg`: extension icon used by the manifest and context menu
 - `background.js`: token context-menu hook
+- `background.html`: Owlbear background entry
 - `index.html`: app shell entry
 - `styles.css`: shared visual system and responsive layout
 - `src/constants.js`: reference data and UI constants
@@ -97,9 +118,9 @@ See [ROADMAP.md](./ROADMAP.md) for current priorities and good places to jump in
 
 ## Known Constraints
 
-- This repo currently avoids a full Node/Vite toolchain and runs as a static project.
-- Some Owlbear SDK loading paths may eventually need to be bundled locally.
 - Demo mode is useful for UI work, but it is not a substitute for live Owlbear testing.
+- Local Owlbear installs require the Vite dev server to stay running.
+- Remote testers need a deployed manifest URL, not a localhost URL.
 
 ## Sources
 

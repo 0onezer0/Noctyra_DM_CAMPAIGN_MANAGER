@@ -10,18 +10,25 @@ Thanks for helping improve the project.
 
 ## Setup
 
-This repo currently runs as a static project instead of a bundled app.
+This repo uses Vite for local development.
 
-Start a local preview server from the repo root:
+Start the dev server from the repo root:
 
 ```powershell
-python -m http.server 5173
+npm install
+npm run dev
 ```
 
 Use:
 
-- `http://127.0.0.1:4173/index.html` for the local UI preview
-- `http://localhost:5173/manifest.json` for Owlbear installation
+- the Vite local URL for the app preview
+- `http://localhost:5173/manifest.json` for Owlbear installation when the dev server is using the default port
+
+Before adding the extension in Owlbear, open the manifest URL directly in your browser and make sure it returns raw JSON.
+
+If Vite starts on a different port such as `5174`, use that port instead of `5173`.
+
+Important: `localhost` installs only work on the same computer running the dev server. Remote collaborators need a deployed public URL.
 
 ## Contribution Priorities
 
@@ -36,7 +43,7 @@ High-value areas:
 
 ## Code Guidelines
 
-- Keep the project no-build unless a change clearly requires a build step.
+- Keep the Vite setup simple and avoid adding unnecessary build complexity.
 - Preserve the modular island architecture.
 - Prefer small reusable helpers over repeated inline logic.
 - Avoid broad visual rewrites unless the PR is specifically about design.
