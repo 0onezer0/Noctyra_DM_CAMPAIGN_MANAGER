@@ -83,6 +83,7 @@ If you want to help:
 5. Open a pull request with clear notes about behavior changes and known gaps.
 
 Start with [CONTRIBUTING.md](./CONTRIBUTING.md) for practical guidelines.
+See [ROADMAP.md](./ROADMAP.md) for current priorities and good places to jump in.
 
 ## Good Contribution Areas
 
