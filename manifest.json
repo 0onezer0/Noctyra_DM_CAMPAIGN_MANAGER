@@ -1,0 +1,16 @@
+{
+  "name": "Campaign Codex",
+  "version": "0.1.0",
+  "manifest_version": 1,
+  "description": "Modular DM dashboard for Owlbear Rodeo with synced token sheets, initiative, conditions, and rolls.",
+  "author": "OpenAI Codex",
+  "icon": "/icon.svg",
+  "action": {
+    "title": "Campaign Codex",
+    "icon": "/icon.svg",
+    "popover": "/index.html",
+    "width": 1180,
+    "height": 780
+  },
+  "background_url": "/background.html"
+}

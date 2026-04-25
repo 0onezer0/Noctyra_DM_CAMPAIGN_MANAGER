@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+Thumbs.db
+
+edge-profile/
+edge-profile-dom/
+edge-profile-preview/
+
+server.out.log
+server.err.log
+tmp-*.png
+
+.env
+.env.*
