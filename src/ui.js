@@ -224,6 +224,46 @@ function renderHpTrack(creature, mode = "standard") {
   `;
 }
 
+function renderEntityHero(creature, activeConditions, mode = "standard") {
+  const heroMetrics = [
+    renderMetric("AC", creature.sheet.ac, "violet"),
+    renderMetric("Passive", getPassivePerception(creature), "olive"),
+    renderMetric("Init", toSigned(creature.sheet.initiative || 0), "graphite"),
+    renderMetric("Speed", `${creature.sheet.speed} ft`, "graphite"),
+  ];
+
+  return `
+    <div class="entity-hero entity-hero--${escapeHtml(mode)}">
+      <div class="entity-hero__identity">
+        ${renderPortrait(creature, mode === "compact" ? "tiny" : "large")}
+        <div class="entity-hero__copy">
+          <div class="entity-hero__eyebrow">${escapeHtml(creature.sheet.affiliations || "Entity")}</div>
+          <h3 class="entity-hero__title">${escapeHtml(creature.sheet.name)}</h3>
+          <p class="entity-hero__meta">
+            ${escapeHtml(`${creature.sheet.className || "Tracked entity"} | Level ${creature.sheet.level}`)}
+          </p>
+          <div class="entity-hero__actions">
+            ${renderPortraitUpload(creature)}
+            ${
+              activeConditions.length
+                ? `<div class="status-row status-row--hero">${activeConditions
+                    .slice(0, mode === "hero" ? 6 : 3)
+                    .map((condition) => renderConditionBadge(condition))
+                    .join("")}</div>`
+                : `<span class="subtle-note">No active conditions</span>`
+            }
+          </div>
+        </div>
+      </div>
+      <div class="entity-hero__aside">
+        <div class="entity-hero__metrics">
+          ${heroMetrics.join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderConditionBadge(condition, interactive = false, creature = null) {
   const glyph = CONDITION_GLYPHS[condition.key] || condition.short || condition.label.slice(0, 2);
   const actionAttributes =
@@ -556,34 +596,41 @@ function renderIslandModel(island, state) {
         };
       }
       const activeConditions = getActiveConditions(creature.sheet);
+      const usesHeroLayout = island.shape === "pill" || island.mode === "hero" || island.mode === "wide";
       return {
-        eyebrow: creature.sheet.affiliations || "Entity",
-        title: creature.sheet.name,
-        meta: `${creature.sheet.className || "Tracked entity"} | Level ${creature.sheet.level}`,
+        eyebrow: usesHeroLayout ? "" : creature.sheet.affiliations || "Entity",
+        title: usesHeroLayout ? "" : creature.sheet.name,
+        meta: usesHeroLayout ? "" : `${creature.sheet.className || "Tracked entity"} | Level ${creature.sheet.level}`,
         icon: renderClassArt(creature.sheet.className, "light", island.mode === "hero" ? "large" : "small"),
         media: `
-          <div class="media-stack">
-            ${renderPortrait(creature, island.mode === "micro" ? "tiny" : "large")}
-            <div class="media-stack__tools">
-              ${renderPortraitUpload(creature)}
-              ${
-                activeConditions.length
-                  ? `<div class="status-row">${activeConditions
-                      .slice(0, island.mode === "hero" ? 6 : 3)
-                      .map((condition) => renderConditionBadge(condition))
-                      .join("")}</div>`
-                  : `<span class="subtle-note">No active conditions</span>`
-              }
-            </div>
-          </div>
+          ${
+            usesHeroLayout
+              ? renderEntityHero(creature, activeConditions, island.mode)
+              : `
+                <div class="media-stack">
+                  ${renderPortrait(creature, island.mode === "micro" ? "tiny" : "large")}
+                  <div class="media-stack__tools">
+                    ${renderPortraitUpload(creature)}
+                    ${
+                      activeConditions.length
+                        ? `<div class="status-row">${activeConditions
+                            .slice(0, island.mode === "hero" ? 6 : 3)
+                            .map((condition) => renderConditionBadge(condition))
+                            .join("")}</div>`
+                        : `<span class="subtle-note">No active conditions</span>`
+                    }
+                  </div>
+                </div>
+              `
+          }
         `,
         primaryMetric: renderHpTrack(creature, island.mode),
         body: `
           <div class="metric-grid">
-            ${renderMetric("AC", creature.sheet.ac, "violet")}
-            ${renderMetric("Level", creature.sheet.level, "olive")}
-            ${renderMetric("Speed", `${creature.sheet.speed} ft`, "graphite")}
-            ${renderMetric("Init", toSigned(creature.sheet.initiative || 0), "graphite")}
+            ${usesHeroLayout ? renderMetric("Level", creature.sheet.level, "olive") : renderMetric("AC", creature.sheet.ac, "violet")}
+            ${usesHeroLayout ? renderMetric("Expert", getExpertiseLabel(creature), "graphite") : renderMetric("Level", creature.sheet.level, "olive")}
+            ${usesHeroLayout ? renderMetric("Passive", getPassivePerception(creature), "graphite") : renderMetric("Speed", `${creature.sheet.speed} ft`, "graphite")}
+            ${usesHeroLayout ? renderMetric("Best Save", getExpertiseLabel(creature), "violet") : renderMetric("Init", toSigned(creature.sheet.initiative || 0), "graphite")}
           </div>
           <div class="summary-row">
             ${creature.sheet.affiliations ? renderSummaryChip("Faction", creature.sheet.affiliations, "violet") : ""}
@@ -948,6 +995,7 @@ function renderSlot(name, visible, content) {
 function renderIsland(island, state) {
   const model = renderIslandModel(island, state);
   const slots = island.slotVisibility;
+  const hasHeaderCopy = Boolean(model.eyebrow || (slots.header && model.title) || (slots.meta && model.meta));
   return `
     <article
       class="island island--${escapeHtml(island.spec.category)} island--mode-${escapeHtml(
@@ -962,12 +1010,18 @@ function renderIsland(island, state) {
       style="grid-column:${island.col} / span ${island.cols};grid-row:${island.row} / span ${island.rows};"
     >
       <div class="island__surface">
-        <header class="island__header ${slots.header ? "" : "island__header--minimal"}" data-drag-handle="true">
-          <div class="island__headcopy">
-            <div class="island__eyebrow">${escapeHtml(model.eyebrow || island.spec.title)}</div>
-            ${slots.header ? `<h3 class="island__title">${escapeHtml(model.title || island.spec.title)}</h3>` : ""}
-            ${slots.meta ? `<p class="island__meta">${escapeHtml(model.meta || "")}</p>` : ""}
-          </div>
+        <header class="island__header ${slots.header ? "" : "island__header--minimal"} ${hasHeaderCopy ? "" : "island__header--controls-only"}" data-drag-handle="true">
+          ${
+            hasHeaderCopy
+              ? `
+                <div class="island__headcopy">
+                  <div class="island__eyebrow">${escapeHtml(model.eyebrow || island.spec.title)}</div>
+                  ${slots.header ? `<h3 class="island__title">${escapeHtml(model.title || island.spec.title)}</h3>` : ""}
+                  ${slots.meta ? `<p class="island__meta">${escapeHtml(model.meta || "")}</p>` : ""}
+                </div>
+              `
+              : ""
+          }
           <div class="island__controls">
             ${model.icon && slots.icon ? `<div class="island__icon">${model.icon}</div>` : ""}
             <button
