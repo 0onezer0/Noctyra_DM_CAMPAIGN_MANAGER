@@ -36,25 +36,15 @@ What still needs improvement:
 
 ## Run Locally
 
-This project is intentionally set up as a static no-build site.
+1. Clone the repo.
+2. Run `npm install`.
+3. Run `npm run dev`.
+4. Open `http://localhost:5173/manifest.json` in your browser and confirm it shows JSON.
+5. In Owlbear Rodeo, go to your profile and add a custom extension using:
+   `http://localhost:5173/manifest.json`
+6. Enable the extension inside your room.
 
-From the project folder:
-
-```powershell
-python -m http.server 5173
-```
-
-Then open:
-
-- Preview mode: `http://127.0.0.1:4173/index.html`
-- Owlbear manifest: `http://127.0.0.1:5173/manifest.json`
-
-To install in Owlbear Rodeo:
-
-1. Open your Owlbear Rodeo profile.
-2. Add a custom extension using `http://localhost:5173/manifest.json`.
-3. Enable the extension in your room.
-4. Select tokens and import them through the extension UI or context menu.
+Note: this only works on the same computer running the dev server.
 
 ## Project Structure
 
